@@ -4,11 +4,19 @@ import (
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/alexnesterov/go_final_project/pkg/db"
 )
 
 const PORT = "7540"
 
 func main() {
+	err := db.Init("scheduler.db")
+	if err != nil {
+		log.Fatalf("init db: %v", err)
+	}
+	defer func() { _ = db.DB.Close() }()
+
 	router := http.NewServeMux()
 
 	router.HandleFunc("/", http.FileServer(http.Dir("web")).ServeHTTP)
