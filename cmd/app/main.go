@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/alexnesterov/go_final_project/pkg/db"
+	"github.com/alexnesterov/go_final_project/internal/db"
 )
 
 const PORT = "7540"
