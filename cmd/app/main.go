@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/alexnesterov/go_final_project/internal/db"
+	"github.com/alexnesterov/go_final_project/internal/handler"
 )
 
 const PORT = "7540"
@@ -20,6 +21,7 @@ func main() {
 	router := http.NewServeMux()
 
 	router.HandleFunc("/", http.FileServer(http.Dir("web")).ServeHTTP)
+	router.HandleFunc("/api/nextdate", handler.NextDate)
 
 	server := http.Server{
 		Addr:         ":" + PORT,
