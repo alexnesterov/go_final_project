@@ -30,7 +30,7 @@ func Init(dbFile string) error {
 		install = true
 	}
 
-	DB, err := sql.Open("sqlite", dbFile)
+	DB, err = sql.Open("sqlite", dbFile)
 	if err != nil {
 		return fmt.Errorf("open db: %v", err)
 	}

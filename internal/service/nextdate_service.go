@@ -31,6 +31,10 @@ func NextDate(now time.Time, dstart, repeat string) (string, error) {
 			return "", fmt.Errorf("parse interval: %v", err)
 		}
 
+		if interval <= 0 {
+			return "", fmt.Errorf("interval must be positive")
+		}
+
 		if interval > 400 {
 			return "", fmt.Errorf("max days 400")
 		}

@@ -21,7 +21,8 @@ func main() {
 	router := http.NewServeMux()
 
 	router.HandleFunc("/", http.FileServer(http.Dir("web")).ServeHTTP)
-	router.HandleFunc("/api/nextdate", handler.NextDate)
+	router.HandleFunc("GET /api/nextdate", handler.NextDate)
+	router.HandleFunc("POST /api/task", handler.CreateTask)
 
 	server := http.Server{
 		Addr:         ":" + PORT,
