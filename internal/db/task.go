@@ -1,6 +1,8 @@
 package db
 
 import (
+	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/alexnesterov/go_final_project/internal/model"
@@ -32,7 +34,7 @@ func ListTasks(limit int) ([]*model.Task, error) {
 
 	rows, err := DB.Query(query, args...)
 	if err != nil {
-		return nil, fmt.Errorf("db query: %v", err)
+		return nil, err
 	}
 	defer func() { _ = rows.Close() }()
 
@@ -40,15 +42,56 @@ func ListTasks(limit int) ([]*model.Task, error) {
 		task := &model.Task{}
 
 		if err := rows.Scan(&task.ID, &task.Date, &task.Title, &task.Comment, &task.Repeat); err != nil {
-			return nil, fmt.Errorf("db scan: %v", err)
+			return nil, err
 		}
 
 		tasks = append(tasks, task)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("db rows: %v", err)
+		return nil, err
 	}
 
 	return tasks, nil
+}
+
+func ReadTask(id string) (*model.Task, error) {
+	task := &model.Task{}
+
+	query := `SELECT * FROM scheduler WHERE id = $1`
+
+	row := DB.QueryRow(query, id)
+
+	err := row.Scan(&task.ID, &task.Date, &task.Title, &task.Comment, &task.Repeat)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, model.ErrNotFound
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return task, nil
+}
+
+func UpdateTask(task *model.Task) error {
+	query := `
+		UPDATE scheduler
+		SET date = $1, title = $2, comment = $3, repeat = $4
+		WHERE id = $5
+	`
+
+	res, err := DB.Exec(query, task.Date, task.Title, task.Comment, task.Repeat, task.ID)
+	if err != nil {
+		return err
+	}
+
+	count, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if count == 0 {
+		return fmt.Errorf("incorrect id for updating task")
+	}
+
+	return nil
 }

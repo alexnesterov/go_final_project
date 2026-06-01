@@ -23,6 +23,9 @@ func main() {
 	router.HandleFunc("/", http.FileServer(http.Dir("web")).ServeHTTP)
 	router.HandleFunc("GET /api/nextdate", handler.NextDate)
 	router.HandleFunc("POST /api/task", handler.CreateTask)
+	router.HandleFunc("GET /api/tasks", handler.ListTasks)
+	router.HandleFunc("GET /api/task", handler.ReadTask)
+	router.HandleFunc("PUT /api/task", handler.UpdateTask)
 
 	server := http.Server{
 		Addr:         ":" + PORT,
