@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	"github.com/alexnesterov/go_final_project/internal/domain/entity"
-	"github.com/alexnesterov/go_final_project/internal/model"
 )
 
 func CreateTask(task *entity.Task) (int64, error) {
@@ -65,7 +64,7 @@ func ReadTask(id string) (*entity.Task, error) {
 
 	err := row.Scan(&task.ID, &task.Date, &task.Title, &task.Comment, &task.Repeat)
 	if errors.Is(err, sql.ErrNoRows) {
-		return nil, model.ErrNotFound
+		return nil, entity.ErrNotFound
 	}
 	if err != nil {
 		return nil, err

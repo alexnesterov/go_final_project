@@ -5,7 +5,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/alexnesterov/go_final_project/internal/model"
+	"github.com/alexnesterov/go_final_project/internal/domain/entity"
 	"github.com/alexnesterov/go_final_project/internal/service"
 )
 
@@ -15,7 +15,7 @@ func ReadTask(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 
 	task, err := service.ReadTask(id)
-	if errors.Is(err, model.ErrNotFound) {
+	if errors.Is(err, entity.ErrNotFound) {
 		w.WriteHeader(http.StatusNotFound)
 		_ = json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
 		return
