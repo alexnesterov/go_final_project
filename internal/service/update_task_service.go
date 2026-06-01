@@ -5,9 +5,10 @@ import (
 
 	"github.com/alexnesterov/go_final_project/internal/db"
 	"github.com/alexnesterov/go_final_project/internal/domain/entity"
+	"github.com/alexnesterov/go_final_project/internal/domain/port"
 )
 
-func UpdateTask(req entity.UpdateTaskRequest) error {
+func UpdateTask(req port.UpdateTaskRequest) error {
 	if req.Title == "" {
 		return fmt.Errorf("title is required")
 	}
