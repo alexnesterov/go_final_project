@@ -26,6 +26,8 @@ func main() {
 	router.HandleFunc("GET /api/tasks", handler.ListTasks)
 	router.HandleFunc("GET /api/task", handler.ReadTask)
 	router.HandleFunc("PUT /api/task", handler.UpdateTask)
+	router.HandleFunc("DELETE /api/task", handler.DeleteTask)
+	router.HandleFunc("POST /api/task/done", handler.DoneTask)
 
 	server := http.Server{
 		Addr:         ":" + PORT,
