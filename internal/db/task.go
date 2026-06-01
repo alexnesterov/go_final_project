@@ -5,10 +5,11 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/alexnesterov/go_final_project/internal/domain/entity"
 	"github.com/alexnesterov/go_final_project/internal/model"
 )
 
-func CreateTask(task *model.Task) (int64, error) {
+func CreateTask(task *entity.Task) (int64, error) {
 	var id int64
 
 	query := `INSERT INTO scheduler (date, title, comment, repeat) VALUES ($1, $2, $3, $4)`
@@ -21,8 +22,8 @@ func CreateTask(task *model.Task) (int64, error) {
 	return id, err
 }
 
-func ListTasks(limit int) ([]*model.Task, error) {
-	tasks := []*model.Task{}
+func ListTasks(limit int) ([]*entity.Task, error) {
+	tasks := []*entity.Task{}
 
 	query := `SELECT * FROM scheduler`
 	args := []any{}
@@ -39,7 +40,7 @@ func ListTasks(limit int) ([]*model.Task, error) {
 	defer func() { _ = rows.Close() }()
 
 	for rows.Next() {
-		task := &model.Task{}
+		task := &entity.Task{}
 
 		if err := rows.Scan(&task.ID, &task.Date, &task.Title, &task.Comment, &task.Repeat); err != nil {
 			return nil, err
@@ -55,8 +56,8 @@ func ListTasks(limit int) ([]*model.Task, error) {
 	return tasks, nil
 }
 
-func ReadTask(id string) (*model.Task, error) {
-	task := &model.Task{}
+func ReadTask(id string) (*entity.Task, error) {
+	task := &entity.Task{}
 
 	query := `SELECT * FROM scheduler WHERE id = $1`
 
@@ -73,7 +74,7 @@ func ReadTask(id string) (*model.Task, error) {
 	return task, nil
 }
 
-func UpdateTask(task *model.Task) error {
+func UpdateTask(task *entity.Task) error {
 	query := `
 		UPDATE scheduler
 		SET date = $1, title = $2, comment = $3, repeat = $4

@@ -4,10 +4,10 @@ package service
 import (
 	"time"
 
-	"github.com/alexnesterov/go_final_project/internal/model"
+	"github.com/alexnesterov/go_final_project/internal/domain/entity"
 )
 
-func checkDate(task *model.Task) error {
+func checkDate(task *entity.Task) error {
 	now := time.Now()
 
 	if task.Date == "" {

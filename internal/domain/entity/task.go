@@ -1,5 +1,5 @@
-// Package model
-package model
+// Package entity
+package entity
 
 type Task struct {
 	ID      string `json:"id"`

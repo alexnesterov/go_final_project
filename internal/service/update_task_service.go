@@ -4,15 +4,15 @@ import (
 	"fmt"
 
 	"github.com/alexnesterov/go_final_project/internal/db"
-	"github.com/alexnesterov/go_final_project/internal/model"
+	"github.com/alexnesterov/go_final_project/internal/domain/entity"
 )
 
-func UpdateTask(req model.UpdateTaskRequest) error {
+func UpdateTask(req entity.UpdateTaskRequest) error {
 	if req.Title == "" {
 		return fmt.Errorf("title is required")
 	}
 
-	task := &model.Task{
+	task := &entity.Task{
 		ID:      req.ID,
 		Date:    req.Date,
 		Title:   req.Title,
