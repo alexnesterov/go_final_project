@@ -5,8 +5,10 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/alexnesterov/go_final_project/internal/adapter/httpapi"
 	"github.com/alexnesterov/go_final_project/internal/db"
-	"github.com/alexnesterov/go_final_project/internal/handler"
+	"github.com/alexnesterov/go_final_project/internal/domain/usecase"
+	"github.com/alexnesterov/go_final_project/internal/infrastructure/sqlite"
 )
 
 const PORT = "7540"
@@ -19,6 +21,15 @@ func main() {
 	defer func() { _ = db.DB.Close() }()
 
 	router := http.NewServeMux()
+
+	taskRepository := sqlite.NewTaskRepository(db.DB)
+	taskService := &usecase.TaskUseCase{
+		TaskRepo: taskRepository,
+	}
+
+	handler := httpapi.TaskHandler{
+		TaskUseCase: taskService,
+	}
 
 	router.HandleFunc("/", http.FileServer(http.Dir("web")).ServeHTTP)
 	router.HandleFunc("GET /api/nextdate", handler.NextDate)

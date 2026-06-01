@@ -1,4 +1,5 @@
-package db
+// Package sqlite
+package sqlite
 
 import (
 	"database/sql"
@@ -8,12 +9,22 @@ import (
 	"github.com/alexnesterov/go_final_project/internal/domain/entity"
 )
 
-func CreateTask(task *entity.Task) (int64, error) {
+type TaskRepository struct {
+	db *sql.DB
+}
+
+func NewTaskRepository(db *sql.DB) *TaskRepository {
+	return &TaskRepository{
+		db: db,
+	}
+}
+
+func (r *TaskRepository) CreateTask(task *entity.Task) (int64, error) {
 	var id int64
 
 	query := `INSERT INTO scheduler (date, title, comment, repeat) VALUES ($1, $2, $3, $4)`
 
-	res, err := DB.Exec(query, task.Date, task.Title, task.Comment, task.Repeat)
+	res, err := r.db.Exec(query, task.Date, task.Title, task.Comment, task.Repeat)
 	if err == nil {
 		id, err = res.LastInsertId()
 	}
@@ -21,7 +32,7 @@ func CreateTask(task *entity.Task) (int64, error) {
 	return id, err
 }
 
-func ListTasks(limit int) ([]*entity.Task, error) {
+func (r *TaskRepository) ListTasks(limit int) ([]*entity.Task, error) {
 	tasks := []*entity.Task{}
 
 	query := `SELECT * FROM scheduler`
@@ -32,7 +43,7 @@ func ListTasks(limit int) ([]*entity.Task, error) {
 		args = append(args, limit)
 	}
 
-	rows, err := DB.Query(query, args...)
+	rows, err := r.db.Query(query, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -55,12 +66,12 @@ func ListTasks(limit int) ([]*entity.Task, error) {
 	return tasks, nil
 }
 
-func ReadTask(id string) (*entity.Task, error) {
+func (r *TaskRepository) ReadTask(id string) (*entity.Task, error) {
 	task := &entity.Task{}
 
 	query := `SELECT * FROM scheduler WHERE id = $1`
 
-	row := DB.QueryRow(query, id)
+	row := r.db.QueryRow(query, id)
 
 	err := row.Scan(&task.ID, &task.Date, &task.Title, &task.Comment, &task.Repeat)
 	if errors.Is(err, sql.ErrNoRows) {
@@ -73,14 +84,14 @@ func ReadTask(id string) (*entity.Task, error) {
 	return task, nil
 }
 
-func UpdateTask(task *entity.Task) error {
+func (r *TaskRepository) UpdateTask(task *entity.Task) error {
 	query := `
 		UPDATE scheduler
 		SET date = $1, title = $2, comment = $3, repeat = $4
 		WHERE id = $5
 	`
 
-	res, err := DB.Exec(query, task.Date, task.Title, task.Comment, task.Repeat, task.ID)
+	res, err := r.db.Exec(query, task.Date, task.Title, task.Comment, task.Repeat, task.ID)
 	if err != nil {
 		return err
 	}
@@ -96,10 +107,10 @@ func UpdateTask(task *entity.Task) error {
 	return nil
 }
 
-func DeleteTask(id string) error {
+func (r *TaskRepository) DeleteTask(id string) error {
 	query := `DELETE FROM scheduler WHERE id = $1`
 
-	res, err := DB.Exec(query, id)
+	res, err := r.db.Exec(query, id)
 	if err != nil {
 		return err
 	}
