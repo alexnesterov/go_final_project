@@ -3,7 +3,6 @@ package db
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 
 	"github.com/alexnesterov/go_final_project/internal/model"
 )
@@ -24,7 +23,7 @@ func CreateTask(task *model.Task) (int64, error) {
 func ListTasks(limit int) ([]*model.Task, error) {
 	tasks := []*model.Task{}
 
-	query := `SELECT * FROM scheduler`
+	query := `SELECT * FROM scheduler ORDER BY date`
 	args := []any{}
 
 	if limit > 0 {
@@ -90,7 +89,7 @@ func UpdateTask(task *model.Task) error {
 		return err
 	}
 	if count == 0 {
-		return fmt.Errorf("incorrect id for updating task")
+		return model.ErrNotFound
 	}
 
 	return nil
@@ -109,7 +108,7 @@ func DeleteTask(id string) error {
 		return err
 	}
 	if count == 0 {
-		return fmt.Errorf("incorrect id for deleting task")
+		return model.ErrNotFound
 	}
 
 	return nil

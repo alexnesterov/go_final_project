@@ -9,7 +9,7 @@ import (
 
 func UpdateTask(req model.UpdateTaskRequest) error {
 	if req.Title == "" {
-		return fmt.Errorf("title is required")
+		return fmt.Errorf("%w: title is required", model.ErrUpdateTask)
 	}
 
 	task := &model.Task{
@@ -21,7 +21,7 @@ func UpdateTask(req model.UpdateTaskRequest) error {
 	}
 
 	if err := checkDate(task); err != nil {
-		return err
+		return fmt.Errorf("%w: %w", model.ErrUpdateTask, err)
 	}
 
 	return db.UpdateTask(task)

@@ -2,8 +2,11 @@ package handler
 
 import (
 	"encoding/json"
+	"errors"
+	"log"
 	"net/http"
 
+	"github.com/alexnesterov/go_final_project/internal/model"
 	"github.com/alexnesterov/go_final_project/internal/service"
 )
 
@@ -12,9 +15,16 @@ func DeleteTask(w http.ResponseWriter, r *http.Request) {
 
 	id := r.URL.Query().Get("id")
 
-	if err := service.DeleteTask(id); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+	err := service.DeleteTask(id)
+	if errors.Is(err, model.ErrNotFound) {
+		w.WriteHeader(http.StatusNotFound)
 		_ = json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+		return
+	}
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Printf("internal error: %v", err)
+		_ = json.NewEncoder(w).Encode(map[string]string{"error": "internal error"})
 		return
 	}
 

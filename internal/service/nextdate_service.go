@@ -14,7 +14,7 @@ func NextDate(now time.Time, dstart, repeat string) (string, error) {
 
 	date, err := time.Parse("20060102", dstart)
 	if err != nil {
-		return "", fmt.Errorf("parse date: %v", err)
+		return "", fmt.Errorf("parse date: %w", err)
 	}
 
 	repeated := strings.Split(repeat, " ")
@@ -27,7 +27,7 @@ func NextDate(now time.Time, dstart, repeat string) (string, error) {
 
 		interval, err := strconv.Atoi(repeated[1])
 		if err != nil {
-			return "", fmt.Errorf("parse interval: %v", err)
+			return "", fmt.Errorf("parse interval: %w", err)
 		}
 
 		if interval <= 0 {

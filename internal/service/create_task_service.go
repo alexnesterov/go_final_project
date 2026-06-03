@@ -9,7 +9,7 @@ import (
 
 func CreateTask(req model.CreateTaskRequest) (string, error) {
 	if req.Title == "" {
-		return "", fmt.Errorf("title is required")
+		return "", fmt.Errorf("%w: title is required", model.ErrCreateTask)
 	}
 
 	task := &model.Task{
@@ -20,7 +20,7 @@ func CreateTask(req model.CreateTaskRequest) (string, error) {
 	}
 
 	if err := checkDate(task); err != nil {
-		return "", err
+		return "", fmt.Errorf("%w: %w", model.ErrCreateTask, err)
 	}
 
 	id, err := db.CreateTask(task)

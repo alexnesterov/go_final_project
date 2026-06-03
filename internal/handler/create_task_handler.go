@@ -2,6 +2,8 @@ package handler
 
 import (
 	"encoding/json"
+	"errors"
+	"log"
 	"net/http"
 
 	"github.com/alexnesterov/go_final_project/internal/model"
@@ -14,14 +16,21 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 	var req model.CreateTaskRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		log.Printf("invalid request body: %v", err)
 		_ = json.NewEncoder(w).Encode(map[string]string{"error": "invalid request body"})
 		return
 	}
 
 	id, err := service.CreateTask(req)
-	if err != nil {
+	if errors.Is(err, model.ErrCreateTask) {
 		w.WriteHeader(http.StatusBadRequest)
 		_ = json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+		return
+	}
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Printf("internal error: %v", err)
+		_ = json.NewEncoder(w).Encode(map[string]string{"error": "internal error"})
 		return
 	}
 

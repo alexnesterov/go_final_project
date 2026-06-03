@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
 
 	"github.com/alexnesterov/go_final_project/internal/model"
@@ -21,8 +22,9 @@ func ReadTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		_ = json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Printf("internal error: %v", err)
+		_ = json.NewEncoder(w).Encode(map[string]string{"error": "internal error"})
 		return
 	}
 
