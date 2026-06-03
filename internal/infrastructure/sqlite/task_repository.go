@@ -4,7 +4,6 @@ package sqlite
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 
 	"github.com/alexnesterov/go_final_project/internal/domain/entity"
 )
@@ -35,7 +34,7 @@ func (r *TaskRepository) CreateTask(task *entity.Task) (int64, error) {
 func (r *TaskRepository) ListTasks(limit int) ([]*entity.Task, error) {
 	tasks := []*entity.Task{}
 
-	query := `SELECT * FROM scheduler`
+	query := `SELECT * FROM scheduler ORDER BY date ASC`
 	args := []any{}
 
 	if limit > 0 {
@@ -101,7 +100,7 @@ func (r *TaskRepository) UpdateTask(task *entity.Task) error {
 		return err
 	}
 	if count == 0 {
-		return fmt.Errorf("incorrect id for updating task")
+		return entity.ErrNotFound
 	}
 
 	return nil
@@ -120,7 +119,7 @@ func (r *TaskRepository) DeleteTask(id string) error {
 		return err
 	}
 	if count == 0 {
-		return fmt.Errorf("incorrect id for deleting task")
+		return entity.ErrNotFound
 	}
 
 	return nil
