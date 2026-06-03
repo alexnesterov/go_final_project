@@ -32,13 +32,13 @@ func Init(dbFile string) error {
 
 	DB, err = sql.Open("sqlite", dbFile)
 	if err != nil {
-		return fmt.Errorf("open db: %v", err)
+		return fmt.Errorf("open db: %w", err)
 	}
 
 	if install {
 		_, err = DB.Exec(schema)
 		if err != nil {
-			return fmt.Errorf("install db: %v", err)
+			return fmt.Errorf("install db: %w", err)
 		}
 	}
 
